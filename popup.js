@@ -233,6 +233,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
       if (response && response.success) setStatus("Storage Cleared", 'success');
+      setTimeout(() => {
+            setStatus('Ready'); // Or setStatus('') to make it blank
+        }, 3000); // 3000ms = 3 seconds
     });
   });
 });

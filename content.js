@@ -208,28 +208,57 @@ function showComparisonOverlay(data) {
 
     const header = document.createElement('div');
     header.style.cssText = 'padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; background: #1a1a1a;';
-    header.innerHTML = `
-        <h2 style="margin:0; font-size: 18px;color: #ffffff;">Mismatch: <span style="color: #ff00ff; font-weight: bold;">${data.mismatch}%</span></h2>
-        <button id="close-vis-reg" style="padding: 8px 16px; cursor: pointer; background: #333; color: white; border: none; border-radius: 4px;">Close</button>
-    `;
+    
+    // Create title element safely without innerHTML
+    const titleContainer = document.createElement('div');
+    const titleHeading = document.createElement('h2');
+    titleHeading.style.cssText = 'margin:0; font-size: 18px; color: #ffffff;';
+    titleHeading.textContent = 'Mismatch: ';
+    
+    const mismatchValue = document.createElement('span');
+    mismatchValue.style.cssText = 'color: #ff00ff; font-weight: bold;';
+    mismatchValue.textContent = String(data.mismatch) + '%';
+    
+    titleHeading.appendChild(mismatchValue);
+    titleContainer.appendChild(titleHeading);
+    
+    // Create close button safely
+    const closeButton = document.createElement('button');
+    closeButton.id = 'close-vis-reg';
+    closeButton.textContent = 'Close';
+    closeButton.style.cssText = 'padding: 8px 16px; cursor: pointer; background: #333; color: white; border: none; border-radius: 4px;';
+    
+    header.appendChild(titleContainer);
+    header.appendChild(closeButton);
 
     const images = document.createElement('div');
     images.style.cssText = 'flex: 1; display: flex; padding: 20px; gap: 20px; overflow: auto; justify-content: center; align-items: flex-start;';
     
-    const createImgCol = (title, src, borderColor) => `
-        <div style="display:flex; flex-direction:column; min-width: 300px; max-width: 33%;">
-            <h3 style="text-align:center; color:${borderColor}; margin-bottom: 10px; font-size: 14px; text-transform: uppercase;">${title}</h3>
-            <div style="border: 2px solid ${borderColor};">
-                <img src="${src}" style="width: 100%; display: block;">
-            </div>
-        </div>
-    `;
+    const createImgCol = (title, src, borderColor) => {
+        const colDiv = document.createElement('div');
+        colDiv.style.cssText = 'display:flex; flex-direction:column; min-width: 300px; max-width: 33%;';
+        
+        const heading = document.createElement('h3');
+        heading.textContent = title;
+        heading.style.cssText = 'text-align:center; color:' + borderColor + '; margin-bottom: 10px; font-size: 14px; text-transform: uppercase;';
+        
+        const imgContainer = document.createElement('div');
+        imgContainer.style.cssText = 'border: 2px solid ' + borderColor + ';';
+        
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = 'width: 100%; display: block;';
+        
+        imgContainer.appendChild(img);
+        colDiv.appendChild(heading);
+        colDiv.appendChild(imgContainer);
+        
+        return colDiv;
+    };
 
-    images.innerHTML = `
-        ${createImgCol('Baseline', data.baseline, '#888')}
-        ${createImgCol('Diff', data.diff, '#ff00ff')}
-        ${createImgCol('Current', data.current, '#888')}
-    `;
+    images.appendChild(createImgCol('Baseline', data.baseline, '#888'));
+    images.appendChild(createImgCol('Diff', data.diff, '#ff00ff'));
+    images.appendChild(createImgCol('Current', data.current, '#888'));
 
     container.appendChild(header);
     container.appendChild(images);
